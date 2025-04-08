@@ -32,22 +32,22 @@ const TabNavigator = () => {
               iconSource = focused
                 ? require('../../assets/Images/home-dark.png')
                 : require('../../assets/Images/home.png');
-            } else if (route.name === 'Leaderboard') {
+            } else if (route.name === 'Experts') {
               iconSource = focused
-                ? require('../../assets/Images/home-dark.png')
-                : require('../../assets/Images/home.png');
-            } else if (route.name === 'Add') {
+                ? require('../../assets/Images/expert_1.png')
+                : require('../../assets/Images/expert.png');
+            } else if (route.name === 'Chat') {
               iconSource = focused
-                ? require('../../assets/Images/plus.png')
-                : require('../../assets/Images/plus.png');
-            } else if (route.name === 'Brand') {
+                ? require('../../assets/Images/chat_1.png')
+                : require('../../assets/Images/chat.png');
+            } else if (route.name === 'Tools') {
               iconSource = focused
-                ? require('../../assets/Images/home-dark.png')
-                : require('../../assets/Images/home.png');
-            } else if (route.name === 'User') {
+                ? require('../../assets/Images/support_1.png')
+                : require('../../assets/Images/support.png');
+            } else if (route.name === 'Community') {
               iconSource = focused
-                ? require('../../assets/Images/home-dark.png')
-                : require('../../assets/Images/home.png');
+                ? require('../../assets/Images/community_1.png')
+                : require('../../assets/Images/community.png');
             }
 
             return (
@@ -95,14 +95,3 @@ const TabNavigator = () => {
 };
 
 export default TabNavigator;
-
-
-   {/* {route.name !== 'Shorts' ? (
-        <Header />
-      ) : (
-        <View className='absolute top-0' style={{ height: 60, backgroundColor: 'white', justifyContent: 'center', paddingHorizontal: 15 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={require("../../assets/Images/plus.png")}/>
-          </TouchableOpacity>
-        </View>
-      )} */}

@@ -1,38 +1,41 @@
-import Add from "../screens/Add"
-import BrandListScreen from "../screens/BrandListScreen"
+// import Add from "../screens/Add"
+// import BrandListScreen from "../screens/BrandListScreen"
+import Chat from "../screens/ChatPage"
+import Coummunity from "../screens/Community"
+import Experts from "../screens/Experts"
 import Home from "../screens/Home"
-import Leaderboard from "../screens/Leaderboard"
-import Shorts from "../screens/Shorts"
-import Subscription from "../screens/Subscription"
-import UserProfile from "../screens/UserProfile"
+// import Leaderboard from "../screens/Leaderboard"
+import Tools from "../screens/FitnessTools"
+
+// import UserProfile from "../screens/UserProfile"
 
 export const TabsRoutes = [
+  // {
+  //   name: "Home",
+  //   Component: Home,
+  //   options: { headerShown: false }
+  // },
   {
-    name: "Home",
-    Component: Home,
-    options: { headerShown: false }
-  },
-  {
-    name: "Leaderboard",
-    Component: Leaderboard,
+    name: "Experts",
+    Component: Experts,
     options: { headerShown: false  }
 
   },
   {
-    name: "Add",
-    Component: Add,
-    options: { headerShown: false,tabBarLabel: 'Add' }
+    name: "Chat",
+    Component: Chat,
+    options: { headerShown: false,tabBarLabel: 'Chat' }
 
   },
   {
-    name: "Brand",
-    Component: BrandListScreen,
+    name: "Tools",
+    Component: Tools,
     options: { headerShown: false }
 
   },
   {
-    name: "User",
-    Component: UserProfile,
+    name: "Community",
+    Component: Coummunity,
     options: { headerShown: false }
   },
 ]
