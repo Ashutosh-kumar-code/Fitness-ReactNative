@@ -54,6 +54,7 @@ const TabNavigator = () => {
               <Image
                 source={iconSource}
                 className="w-8 h-6 py-4 object-cover"
+                style={{ width: 24, height: 20, resizeMode: 'contain', marginTop: 4 }}
               />
             );
           },

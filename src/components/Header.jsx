@@ -19,6 +19,9 @@ const Header = () => {
             <Text style={styles.appName}>Fitness</Text>
           </View>
 
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('my-profile')} >
+            <Text style={styles.loginText}>Profile</Text>
+          </TouchableOpacity>
           {/* Right: Login Button */}
           <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')} >
             <Text style={styles.loginText}>Login</Text>
@@ -38,7 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#329E8E',
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40,
-    paddingVertical: 16,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     width: width,
   },
@@ -58,7 +61,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   appName: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'serif',
     color: 'white',

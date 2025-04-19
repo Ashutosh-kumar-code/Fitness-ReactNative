@@ -61,8 +61,8 @@ const Coummunity = () => {
                     </View>
                 )}
             />
-            <TouchableOpacity style={styles.fab} >
-                <Text style={styles.fabText}>+</Text>
+            <TouchableOpacity style={styles.fab}   >
+                <Text style={styles.fabText} onPress={() => navigation.navigate('Blog Post')} >+</Text>
             </TouchableOpacity>
         </View>
     );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const chats = {
     active: [
@@ -30,6 +31,8 @@ const chats = {
 };
 
 const ChatPage = () => {
+
+          const navigation = useNavigation();
     const [tab, setTab] = useState('active');
 
     return (
@@ -55,10 +58,10 @@ const ChatPage = () => {
                 data={chats[tab]}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.chatCard}>
-                        <Image source={item.avatar } style={styles.avatar} />
+                    <TouchableOpacity style={styles.chatCard}  >
+                        <Image source={item.avatar } style={styles.avatar}  />
                         <View style={styles.chatInfo}>
-                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.name}  >{item.name} </Text>
                             <Text style={styles.message}>{item.lastMessage}</Text>
                         </View>
                         <Text style={styles.time}>{item.time}</Text>

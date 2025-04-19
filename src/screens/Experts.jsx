@@ -39,7 +39,12 @@ const Experts = () => {
     { id: 2, name: 'Sita', image: require('../assets/Images/trainer_1.png') },
     { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
     { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
+    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
   ];
+
+  const advertiseData = [require('../assets/Images/advertisement1.png'), 
+    require('../assets/Images/advertisement2.png'),
+     require('../assets/Images/advertisement1.png')]
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
@@ -68,8 +73,25 @@ const Experts = () => {
         ))}
       </ScrollView>
 
+{/* Image Slider */}
+<ScrollView
+  horizontal
+  pagingEnabled
+  showsHorizontalScrollIndicator={false}
+  style={styles.sliderContainer}
+>
+  {advertiseData.map((image, index) => (
+    <Image
+      key={index}
+      source={image}
+      style={styles.sliderImage}
+    />
+  ))}
+</ScrollView>
+
+
       {/* Trainers Section */}
-      <Text style={styles.sectionTitle}>Meet Our Trainers</Text>
+      <Text style={styles.sectionTitle}>Meet Our Experts</Text>
       <FlatList
         data={[...filteredTrainers, { id: 'see-more' }]}
         keyExtractor={(item) => item.id}
@@ -80,8 +102,9 @@ const Experts = () => {
             return (
               <TouchableOpacity
                 style={[styles.trainerCard, { justifyContent: 'center' }]}
-                onPress={() => navigation.navigate('all-trainers')}
+                onPress={() => navigation.navigate('All Experts')}
               >
+                <Image source={require('../assets/Images/menu.png')}  />
                 <Text style={styles.seeMoreText}>See More</Text>
               </TouchableOpacity>
             );
@@ -98,6 +121,70 @@ const Experts = () => {
           );
         }}
       />
+
+
+<Text className='mt-4 mb-1' style={styles.sectionTitle}>Meet Our top Dermatologist </Text>
+      <FlatList
+        data={[...filteredTrainers, { id: 'see-more' }]}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => {
+          if (item.id === 'see-more') {
+            return (
+              <TouchableOpacity
+                style={[styles.trainerCard, { justifyContent: 'center' }]}
+                onPress={() => navigation.navigate('All Experts')}
+              >
+                <Image source={require('../assets/Images/menu.png')}  />
+                <Text style={styles.seeMoreText}>See More</Text>
+              </TouchableOpacity>
+            );
+          }
+
+          return (
+            <TouchableOpacity style={styles.trainerCard} onPress={() => navigation.navigate('trainer-profile')}>
+              <View style={styles.trainerImageContainer}>
+                <Image source={item.image} style={styles.trainerImage} />
+              </View>
+              <Text style={styles.trainerName}>{item.name}</Text>
+              <Text style={styles.trainerExperience}>{item.experience} years</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+
+<Text className='mt-4 mb-1' style={styles.sectionTitle}>Meet Our top Dietician </Text>
+      <FlatList
+        data={[...filteredTrainers, { id: 'see-more' }]}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => {
+          if (item.id === 'see-more') {
+            return (
+              <TouchableOpacity
+                style={[styles.trainerCard, { justifyContent: 'center' }]}
+                onPress={() => navigation.navigate('All Experts')}
+              >
+                <Image source={require('../assets/Images/menu.png')}  />
+                <Text style={styles.seeMoreText}>See More</Text>
+              </TouchableOpacity>
+            );
+          }
+
+          return (
+            <TouchableOpacity style={styles.trainerCard} onPress={() => navigation.navigate('trainer-profile')}>
+              <View style={styles.trainerImageContainer}>
+                <Image source={item.image} style={styles.trainerImage} />
+              </View>
+              <Text style={styles.trainerName}>{item.name}</Text>
+              <Text style={styles.trainerExperience}>{item.experience} years</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+
     </ScrollView>
   );
 };
@@ -169,12 +256,11 @@ const styles = StyleSheet.create({
     width: 130,
     marginRight: 15,
     padding: 10,
-    borderRadius: 12,
+    borderRadius: 28,
     backgroundColor: '#e1f3f0',
     borderWidth: 1,
     borderColor: '#a8dcd4',
-    alignItems: 'center',
-    elevation: 3,
+    alignItems: 'center', 
   },
   trainerImageContainer: {
     width: 70,
@@ -206,7 +292,23 @@ const styles = StyleSheet.create({
     color: '#1a6460',
     fontWeight: 'bold',
     textAlign: 'center',
+    marginTop: 10,
   },
+  sliderContainer: {
+    width: '100%',
+    height: 180,
+    marginBottom: 20,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  sliderImage: {
+    width: width - 20, // Full width minus some margin
+    height: 180,
+    resizeMode: 'cover',
+    borderRadius: 16,
+    marginHorizontal: 10,
+  },
+  
 });
 
 export default Experts;

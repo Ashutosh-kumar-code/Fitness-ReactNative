@@ -24,6 +24,10 @@ import Login from './src/components/pages/Login';
 import UserProfile from './src/components/pages/UserProfile';
 import TrainerProfile from './src/components/pages/TrainerProfile';
 import Signup from './src/components/pages/Signup';
+import ExpertsLists from './src/components/pages/ExpertsLists';
+import CreateBlog from './src/components/pages/CreateBlog';
+import ChatScreen from './src/components/pages/ChatScreen';
+import MyProfile from './src/components/pages/MyProfile';
 
 
 
@@ -52,6 +56,10 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Signup" component={Signup}  />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="User" component={UserProfile} />
+        <Stack.Screen name="All Experts" component={ExpertsLists} />
+        <Stack.Screen name="Blog Post" component={CreateBlog} />
+        <Stack.Screen name="chat-msg" component={ChatScreen} />
+        <Stack.Screen name="my-profile" component={MyProfile} />
 
 
         {/* TOOLS  */}
@@ -69,120 +77,5 @@ function App(): React.JSX.Element {
 export default App;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const MainScreen = ({ activeTab }: any) => {
-//   switch (activeTab) {
-//     case "Home":
-//       return <Home />;
-//     case "Shorts":
-//       return <Shorts />;
-//     case "Subscription":
-//       return <Subscription />;
-//     case "User":
-//       return <UserProfile />;
-//     default:
-//       return <Home />;
-//   }
-// };
-
-
-
-
-// <NavigationContainer>
-// <Header/>
-//     <Stack.Navigator screenOptions={{ headerShown: false }}>
-//       <Stack.Screen name="Main">
-//         {() => <MainScreen activeTab={activeTab} />}
-//       </Stack.Screen>
-//       <Stack.Screen name="DailyDevotion" component={() => <View><Text>Hello</Text></View>} />
-
-//     </Stack.Navigator>
-//     <FooterTabs  navigation={{ navigate: setActiveTab }} />
-
-// </NavigationContainer>
-
-
-
-
-
-
-// <NavigationContainer>
-//   <Stack.Navigator initialRouteName="Home">
-
-//     {TabsRoutes.map((tabs, index) =>
-//       <Stack.Screen
-//         key={index}
-//         name={tabs.name}
-//         component={tabs.Component}
-//         options={tabs.options}
-
-//       />
-//     )
-//     }
-
-//   </Stack.Navigator>
-//   <FooterTabs navigation={navigation} />
-
-// </NavigationContainer>
-
-
-
+// npx react-native run-android
 
