@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 const TrainerProfile = ({ verified = true }) => {
-        const navigation = useNavigation();
+    const navigation = useNavigation();
 
     const [isFollowing, setIsFollowing] = useState(false);
     const [followers, setFollowers] = useState(120);
@@ -17,76 +17,81 @@ const TrainerProfile = ({ verified = true }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.profileHeader}>
-                <View style={[styles.avatarContainer, verified ? styles.verifiedBorder : styles.normalBorder]}>
-                    <Image source={require('../../assets/Images/trainer_1.png')} style={styles.avatar} />
-                    {verified && <Text style={styles.verifiedBadge}>✔</Text>}
-                </View>
-                <Text style={styles.name}>Shivansh Sharma</Text>
-                <Text style={styles.role}>Fitness/ Wellness Coach</Text>
-                
-                <TouchableOpacity 
-                    style={[styles.followButton, { backgroundColor: isFollowing ? '#aaa' : '#329e8e' }]}
-                    onPress={toggleFollow}
-                >
-                    <Text style={styles.followText}>{isFollowing ? 'Following' : 'Follow'}</Text>
-                </TouchableOpacity>
-
-                <View style={styles.followStats}>
-                <TouchableOpacity onPress={() => navigation.navigate('Followers')} >  
-                    <View style={styles.statBox}>
-                        <Text style={styles.statNumber}>{followers}</Text>
-                        <Text style={styles.statLabel}>Followers</Text>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.container}>
+                <View style={styles.profileHeader}>
+                    <View style={[styles.avatarContainer, verified ? styles.verifiedBorder : styles.normalBorder]}>
+                        <Image source={require('../../assets/Images/trainer_1.png')} style={styles.avatar} />
+                        {verified && <Text style={styles.verifiedBadge}>✔</Text>}
                     </View>
+                    <Text style={styles.name}>Shivansh Sharma</Text>
+                    <Text style={styles.role}>Fitness/ Wellness Coach</Text>
+
+                    <TouchableOpacity
+                        style={[styles.followButton, { backgroundColor: isFollowing ? '#aaa' : '#329e8e' }]}
+                        onPress={toggleFollow}
+                    >
+                        <Text style={styles.followText}>{isFollowing ? 'Following' : 'Follow'}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Following')} >
-                    <View style={styles.statBox}>
-                        <Text style={styles.statNumber}>{following}</Text>
-                        <Text style={styles.statLabel}>Following</Text>
+
+                    <View style={styles.followStats}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Followers')}>
+                            <View style={styles.statBox}>
+                                <Text style={styles.statNumber}>{followers}</Text>
+                                <Text style={styles.statLabel}>Followers</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Following')}>
+                            <View style={styles.statBox}>
+                                <Text style={styles.statNumber}>{following}</Text>
+                                <Text style={styles.statLabel}>Following</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
+                </View>
+
+                <View style={styles.ratingContainer}>
+                    <Text style={styles.ratingText}>⭐ 4.0 (5 reviews)</Text>
+                </View>
+
+                <View style={styles.detailsContainer}>
+                    <Text style={styles.detailText}>7+ Years</Text>
+                    <Text style={styles.detailText}>Freelance Nutritionist</Text>
+                    <Text style={styles.detailText}>Bareilly</Text>
+                </View>
+
+                <Text style={styles.description}>
+                    I can help with achieving your health goals and unlocking your best life. As a passionate fitness coach, I'm dedicated to supporting individuals in reaching their full potential.
+                </Text>
+
+                <View style={styles.pricingContainer}>
+                    <TouchableOpacity style={styles.circularButton}>
+                        <Text style={styles.priceText}>Call{'\n'}₹250</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.circularButton}>
+                        <Text style={styles.priceText}>Video{'\n'}₹500</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.circularButton}>
+                        <Text style={styles.priceText}>Chat{'\n'}₹200</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.bookingContainer}>
+                    <Text style={styles.nextAvailable}>Next available at</Text>
+                    <Text style={styles.time}>11:45 AM - Tomorrow</Text>
+                    <TouchableOpacity style={styles.bookNowButton}>
+                        <Text style={styles.bookNowText}>Book now →</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-
-            <View style={styles.ratingContainer}>
-                <Text style={styles.ratingText}>⭐ 4.0 (5 reviews)</Text>
-            </View>
-
-            <View style={styles.detailsContainer}>
-                <Text style={styles.detailText}>7+ Years</Text>
-                <Text style={styles.detailText}>Freelance Nutritionist</Text>
-                <Text style={styles.detailText}>Bareilly</Text>
-            </View>
-
-            <Text style={styles.description}>
-                I can help with achieving your health goals and unlocking your best life. As a passionate fitness coach, I'm dedicated to supporting individuals in reaching their full potential.
-            </Text>
-
-            <View style={styles.pricingContainer}>
-                <TouchableOpacity style={styles.circularButton}>
-                    <Text style={styles.priceText}>Call{'\n'}₹250</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.circularButton}>
-                    <Text style={styles.priceText}>Video{'\n'}₹500</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.circularButton}>
-                    <Text style={styles.priceText}>Chat{'\n'}₹200</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.bookingContainer}>
-                <Text style={styles.nextAvailable}>Next available at</Text>
-                <Text style={styles.time}>11:45 AM - Tomorrow</Text>
-                <TouchableOpacity style={styles.bookNowButton}>
-                    <Text style={styles.bookNowText}>Book now →</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    scrollContainer: {
+        paddingBottom: 30,
+    },
     container: {
         flex: 1,
         backgroundColor: 'white',

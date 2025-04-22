@@ -40,6 +40,11 @@ const Experts = () => {
     { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
     { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
     { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
+    { id: 1, name: 'Ravi', image: require('../assets/Images/trainer.png') },
+    { id: 2, name: 'Sita', image: require('../assets/Images/trainer_1.png') },
+    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
+    { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
+    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
   ];
 
   const advertiseData = [require('../assets/Images/advertisement1.png'), 
@@ -74,24 +79,25 @@ const Experts = () => {
       </ScrollView>
 
 {/* Image Slider */}
-<ScrollView
+<FlatList
+  data={advertiseData}
   horizontal
-  pagingEnabled
   showsHorizontalScrollIndicator={false}
-  style={styles.sliderContainer}
->
-  {advertiseData.map((image, index) => (
-    <Image
-      key={index}
-      source={image}
-      style={styles.sliderImage}
-    />
-  ))}
-</ScrollView>
-
+  pagingEnabled
+  decelerationRate="fast"
+  snapToInterval={width} // 1 image at a time
+  snapToAlignment="center"
+  contentContainerStyle={{}}
+  keyExtractor={(item, index) => index.toString()}
+  renderItem={({ item }) => (
+    <View style={{ width }}>
+      <Image source={item} style={styles.sliderImage} />
+    </View>
+  )}
+/>
 
       {/* Trainers Section */}
-      <Text style={styles.sectionTitle}>Meet Our Experts</Text>
+      <Text className='mt-2 ' style={styles.sectionTitle}>Meet Our Experts</Text>
       <FlatList
         data={[...filteredTrainers, { id: 'see-more' }]}
         keyExtractor={(item) => item.id}
@@ -220,15 +226,15 @@ const styles = StyleSheet.create({
   },
   notesContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 14,
   },
   noteWrapper: {
     alignItems: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
   },
   outerCircle: {
-    width: 70,
-    height: 70,
+    width: 68,
+    height: 68,
     borderRadius: 35,
     borderWidth: 3,
     borderColor: '#329e8e',
@@ -236,8 +242,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   innerImage: {
-    width: 64,
-    height: 64,
+    width: 62,
+    height: 62,
     borderRadius: 32,
   },
   username: {
@@ -298,17 +304,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 180,
     marginBottom: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
   },
   sliderImage: {
-    width: width - 20, // Full width minus some margin
+    width: '96%',
     height: 180,
     resizeMode: 'cover',
-    borderRadius: 16,
-    marginHorizontal: 10,
+    borderRadius: 22,
   },
-  
 });
 
 export default Experts;

@@ -71,7 +71,7 @@ const Signup = ({ navigation }) => {
       Alert.alert('Error', 'Please fill all required fields.');
       return;
     }
-
+  
     const userData = {
       name,
       email,
@@ -82,10 +82,10 @@ const Signup = ({ navigation }) => {
       age,
       gender,
       city,
+      profileImage, // assuming you're sending URI or base64 here
       languages: languagesSpoken,
-      profileImage,
     };
-
+  
     if (role === 'trainer') {
       Object.assign(userData, {
         trainerType,
@@ -97,18 +97,20 @@ const Signup = ({ navigation }) => {
         feesCall,
       });
     }
-
+  
     setLoading(true);
     try {
-      const response = await axios.post('https://your-api-url/register', userData);
+      const response = await axios.post('http://<YOUR_SERVER_IP>:<PORT>/register', userData);
       Alert.alert('Success', response.data.message);
       navigation.navigate('Login');
     } catch (error) {
+      console.error(error);
       Alert.alert('Error', error.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

@@ -21,9 +21,8 @@ export default function MyProfile() {
       <View style={styles.header}>
         <Text style={styles.title}>My Profile</Text>
         <View style={styles.coins}>
-          {/* <Icon name="monetization-on" size={22} color="#f5b100" /> */}
           <Image
-          source={require('../../assets/Images/rupee.png')}  
+          source={require('../../assets/Images/rupee.png')}
         />
           <Text style={styles.coinsText}>0</Text>
         </View>
@@ -31,7 +30,7 @@ export default function MyProfile() {
 
       <View style={styles.profileSection}>
         <Image
-          source={require('../../assets/Images/trainer_1.png')} // replace with actual image path
+          source={require('../../assets/Images/trainer_1.png')}
           style={styles.profileImage}
         />
         <Text style={styles.name}>Sanket Jare</Text>
@@ -45,21 +44,20 @@ export default function MyProfile() {
             onPress={option.onPress}
           >
             <View style={styles.optionLeft}>
-              {/* <Icon name={option.icon} size={22} color="#329E8E" /> */}
               <Image
-          source={require('../../assets/Images/profile1.png')}  
+          source={require('../../assets/Images/profile1.png')}
         />
               <Text style={styles.optionText}>{option.label}</Text>
             </View>
             <Image
-          source={require('../../assets/Images/right-arrow.png')}  
+          source={require('../../assets/Images/right-arrow.png')}
         />
           </TouchableOpacity>
         ))}
 
         <TouchableOpacity style={styles.deleteAccount}>
         <Image
-          source={require('../../assets/Images/trash.png')}  
+          source={require('../../assets/Images/trash.png')}
         />
           <Text style={styles.deleteText}>Delete Account</Text>
         </TouchableOpacity>

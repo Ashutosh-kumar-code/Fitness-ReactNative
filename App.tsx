@@ -28,6 +28,8 @@ import ExpertsLists from './src/components/pages/ExpertsLists';
 import CreateBlog from './src/components/pages/CreateBlog';
 import ChatScreen from './src/components/pages/ChatScreen';
 import MyProfile from './src/components/pages/MyProfile';
+import Welcome from './src/screens/Welcome';
+import AuthChoice from './src/screens/AuthChoice';
 
 
 
@@ -36,13 +38,19 @@ const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="Welcome">
         {/* <Stack.Screen
           name="Splash"
           component={Splash}
           options={{ headerShown: false }}
         /> */}
+         <Stack.Screen
+    name="Welcome"
+    component={Welcome}
+    options={{ headerShown: false }}
+  />
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="AuthChoice" component={AuthChoice} options={{ headerShown: false }} />
        
         <Stack.Screen name="Experts" component={Experts} />
         <Stack.Screen name="Tools" component={FitnessTools} />

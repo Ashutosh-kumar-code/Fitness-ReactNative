@@ -8,8 +8,7 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
-  PermissionsAndroid,
-  Platform,
+  Alert,
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -19,30 +18,7 @@ const CreateBlog = () => {
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
 
-  const requestGalleryPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES || PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'Permission to access gallery',
-          message: 'App needs access to your gallery to upload images.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
-    return true; // iOS auto grants on most cases
-  };
-
   const pickImage = async () => {
-    const hasPermission = await requestGalleryPermission();
-    if (!hasPermission) {
-      alert('Permission denied. Cannot access gallery.');
-      return;
-    }
-
     const result = await launchImageLibrary({
       mediaType: 'photo',
       quality: 1,
@@ -50,12 +26,22 @@ const CreateBlog = () => {
 
     if (result && result.assets && result.assets.length > 0) {
       setImage(result.assets[0].uri);
+    } else {
+      Alert.alert('Image selection canceled');
     }
   };
 
   const handlePost = () => {
-    console.log('Posted:', { content, image });
-    // Add your API call or state handling logic here
+    if (!content.trim()) {
+      Alert.alert('Error', 'Please write something in the blog.');
+      return;
+    }
+
+    // Post logic or API call here
+    console.log('Blog Posted:', { content, image });
+    Alert.alert('Success', 'Your blog has been posted!');
+    setContent('');
+    setImage(null);
   };
 
   return (
@@ -140,7 +126,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 5,
-    // elevation: 3,
   },
   postButtonText: {
     color: '#fff',
