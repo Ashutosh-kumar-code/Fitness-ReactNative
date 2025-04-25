@@ -100,7 +100,7 @@ const Signup = ({ navigation }) => {
   
     setLoading(true);
     try {
-      const response = await axios.post('http://<YOUR_SERVER_IP>:<PORT>/register', userData);
+      const response = await axios.post('https://fitness-backend-eight.vercel.app/api/user/register', userData);
       Alert.alert('Success', response.data.message);
       navigation.navigate('Login');
     } catch (error) {

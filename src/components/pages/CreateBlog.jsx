@@ -1,63 +1,82 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Alert,
+  View, Text, TextInput, TouchableOpacity, Image,
+  StyleSheet, Dimensions, ScrollView, Alert
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
 const CreateBlog = () => {
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 1,
-    });
-
-    if (result && result.assets && result.assets.length > 0) {
-      setImage(result.assets[0].uri);
-    } else {
-      Alert.alert('Image selection canceled');
-    }
+    const result = await launchImageLibrary({ mediaType: 'photo', quality: 1 });
+    if (result?.assets?.length) setImage(result.assets[0]);
+    else Alert.alert('Image selection canceled');
   };
 
-  const handlePost = () => {
-    if (!content.trim()) {
-      Alert.alert('Error', 'Please write something in the blog.');
+  const handlePost = async () => {
+    if (!title.trim() || !content.trim()) {
+      Alert.alert('Error', 'Title and content are required.');
       return;
     }
 
-    // Post logic or API call here
-    console.log('Blog Posted:', { content, image });
-    Alert.alert('Success', 'Your blog has been posted!');
-    setContent('');
-    setImage(null);
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const role = 'user'; // Replace or retrieve from AsyncStorage if you store it
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('userId', userId);
+      formData.append('role', role);
+
+      if (image) {
+        formData.append('image', {
+          uri: image.uri,
+          name: image.fileName || 'blog.jpg',
+          type: image.type || 'image/jpeg'
+        });
+      }
+
+      const response = await axios.post('https://fitness-backend-eight.vercel.app/api/blog/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      Alert.alert('Success', 'Blog posted successfully!');
+      setTitle('');
+      setContent('');
+      setImage(null);
+
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', error.response?.data?.message || 'Failed to post blog');
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>Create Blog</Text>
 
+      <TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
+
       <TouchableOpacity style={styles.imageUploadBox} onPress={pickImage}>
         {image ? (
-          <Image source={{ uri: image }} style={styles.previewImage} />
+          <Image source={{ uri: image.uri }} style={styles.previewImage} />
         ) : (
           <Text style={styles.uploadText}>+ Upload Image (Optional)</Text>
         )}
       </TouchableOpacity>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { height: 120 }]}
         placeholder="Write something inspiring..."
         placeholderTextColor="#888"
         multiline

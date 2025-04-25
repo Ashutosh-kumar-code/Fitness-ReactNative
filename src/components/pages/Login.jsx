@@ -1,30 +1,39 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    
+
     const handleLogin = async () => {
         if (!email || !password) {
             Alert.alert('Error', 'Please enter email and password.');
             return;
         }
-        
+
         setLoading(true);
         try {
-            const response = await axios.post('https://your-api-url/login', { email, password });
+            const response = await axios.post('https://fitness-backend-eight.vercel.app/api/user/login', { email, password });
+
+            const { token, user } = response.data;
+
+            // Save token and user ID to AsyncStorage
+            await AsyncStorage.setItem('userToken', token);
+            await AsyncStorage.setItem('userId', user._id);
+            await AsyncStorage.setItem('userRole', user.role);
+
             Alert.alert('Success', 'Login successful!');
-            navigation.navigate('Home', { user: response.data.user });
+            navigation.replace('Main'); // Replace so user can’t go back to login
         } catch (error) {
             Alert.alert('Error', error.response?.data?.message || 'Login failed');
         } finally {
             setLoading(false);
         }
     };
-    
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Login</Text>

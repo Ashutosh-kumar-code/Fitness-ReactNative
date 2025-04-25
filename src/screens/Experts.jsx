@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,27 +11,102 @@ import {
   TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
 const Experts = () => {
   const navigation = useNavigation();
-
-  const [trainers, setTrainers] = useState([
-    { id: '1', name: 'Trainer One', experience: 5, image: require('../assets/Images/trainer.png') },
-    { id: '2', name: 'Trainer Two', experience: 3, image: require('../assets/Images/trainer_1.png') },
-    { id: '3', name: 'Trainer Three', experience: 7, image: require('../assets/Images/trainer.png') },
-  ]);
-
-  const [filteredTrainers, setFilteredTrainers] = useState(trainers);
   const [search, setSearch] = useState('');
 
-  const handleSearch = () => {
-    const query = search.toLowerCase();
-    const result = trainers.filter(trainer =>
-      trainer.name.toLowerCase().includes(query)
+  const [trainers, setTrainers] = useState([]);
+  const [dermatologists, setDermatologists] = useState([]);
+  const [dieticians, setDieticians] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTrainersByType(); // Fetch all types
+  }, []);
+
+  const fetchTrainersByType = async () => {
+    try {
+      const [trainerRes, dermaRes, dietRes] = await Promise.all([
+        axios.post('https://fitness-backend-eight.vercel.app/api/user/verified-trainers', {
+          trainerType: 'Trainer'
+        }),
+        axios.post('https://fitness-backend-eight.vercel.app/api/user/verified-trainers', {
+          trainerType: 'Dermatologist'
+        }),
+        axios.post('https://fitness-backend-eight.vercel.app/api/user/verified-trainers', {
+          trainerType: 'Dietician'
+        }),
+      ]);
+  
+      setTrainers(trainerRes.data || []);
+      setDermatologists(dermaRes.data || []);
+      setDieticians(dietRes.data || []);
+    } catch (error) {
+      console.error('Error fetching trainers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+
+  const renderTrainerSection = (data, title, navigateTo) => {
+    const hasData = Array.isArray(data) && data.length > 0;
+    const limitedData = hasData && data.length > 9 ? data.slice(0, 9).concat({ _id: 'see-more' }) : data;
+
+    if (loading) {
+      return (
+        <View style={[styles.container, { justifyContent: 'center', flex: 1 }]}>
+          <Text style={{ fontSize: 16, color: '#555' }}>Loading experts...</Text>
+        </View>
+      );
+    }
+    return (
+      <>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {hasData ? (
+          <FlatList
+            data={limitedData}
+            keyExtractor={(item) => item._id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => {
+              if (item._id === 'see-more') {
+                return (
+                  <TouchableOpacity style={[styles.trainerCard, { justifyContent: 'center' }]} onPress={() => navigation.navigate(navigateTo)}>
+                    <Image source={require('../assets/Images/menu.png')} />
+                    <Text style={styles.seeMoreText}>See More</Text>
+                  </TouchableOpacity>
+                );
+              }
+
+              return (
+                <TouchableOpacity style={styles.trainerCard} onPress={() => navigation.navigate('Trainer', { trainer: item })}>
+                  <View style={styles.trainerImageContainer}>
+                    {/* <Image
+                      source={item.image ? { uri: item.image } : require('../assets/Images/trainer.png')}
+                      style={styles.trainerImage}
+                    /> */}
+                  </View>
+                  <Text style={styles.trainerName}>{item.name}</Text>
+                  <Text style={styles.trainerExperience}>{item.experience || 0} years</Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        ) : (
+          <View style={styles.noDataCard}>
+            <Image source={require('../assets/Images/empty.png')} style={styles.noDataImage} />
+            <Text style={styles.noDataText}>No {title.toLowerCase()} found</Text>
+          </View>
+        )}
+      </>
     );
-    setFilteredTrainers(result);
   };
 
   const storyNotes = [
@@ -39,17 +114,13 @@ const Experts = () => {
     { id: 2, name: 'Sita', image: require('../assets/Images/trainer_1.png') },
     { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
     { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
-    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
-    { id: 1, name: 'Ravi', image: require('../assets/Images/trainer.png') },
-    { id: 2, name: 'Sita', image: require('../assets/Images/trainer_1.png') },
-    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
-    { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
-    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
   ];
 
-  const advertiseData = [require('../assets/Images/advertisement1.png'), 
+  const advertiseData = [
+    require('../assets/Images/advertisement1.png'),
     require('../assets/Images/advertisement2.png'),
-     require('../assets/Images/advertisement1.png')]
+    require('../assets/Images/advertisement1.png')
+  ];
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
@@ -61,12 +132,12 @@ const Experts = () => {
           value={search}
           onChangeText={setSearch}
         />
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+        <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
           <Text style={{ color: 'white', fontWeight: 'bold' }}>Search</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Notes - Instagram story style */}
+      {/* Notes */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.notesContainer}>
         {storyNotes.map((note, index) => (
           <View key={index} style={styles.noteWrapper}>
@@ -78,119 +149,27 @@ const Experts = () => {
         ))}
       </ScrollView>
 
-{/* Image Slider */}
-<FlatList
-  data={advertiseData}
-  horizontal
-  showsHorizontalScrollIndicator={false}
-  pagingEnabled
-  decelerationRate="fast"
-  snapToInterval={width} // 1 image at a time
-  snapToAlignment="center"
-  contentContainerStyle={{}}
-  keyExtractor={(item, index) => index.toString()}
-  renderItem={({ item }) => (
-    <View style={{ width }}>
-      <Image source={item} style={styles.sliderImage} />
-    </View>
-  )}
-/>
-
-      {/* Trainers Section */}
-      <Text className='mt-2 ' style={styles.sectionTitle}>Meet Our Experts</Text>
+      {/* Slider */}
       <FlatList
-        data={[...filteredTrainers, { id: 'see-more' }]}
-        keyExtractor={(item) => item.id}
+        data={advertiseData}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
-          if (item.id === 'see-more') {
-            return (
-              <TouchableOpacity
-                style={[styles.trainerCard, { justifyContent: 'center' }]}
-                onPress={() => navigation.navigate('All Experts')}
-              >
-                <Image source={require('../assets/Images/menu.png')}  />
-                <Text style={styles.seeMoreText}>See More</Text>
-              </TouchableOpacity>
-            );
-          }
-
-          return (
-            <TouchableOpacity style={styles.trainerCard} onPress={() => navigation.navigate('trainer-profile')}>
-              <View style={styles.trainerImageContainer}>
-                <Image source={item.image} style={styles.trainerImage} />
-              </View>
-              <Text style={styles.trainerName}>{item.name}</Text>
-              <Text style={styles.trainerExperience}>{item.experience} years</Text>
-            </TouchableOpacity>
-          );
-        }}
+        pagingEnabled
+        decelerationRate="fast"
+        snapToInterval={width}
+        snapToAlignment="center"
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={{ width }}>
+            <Image source={item} style={styles.sliderImage} />
+          </View>
+        )}
       />
 
-
-<Text className='mt-4 mb-1' style={styles.sectionTitle}>Meet Our top Dermatologist </Text>
-      <FlatList
-        data={[...filteredTrainers, { id: 'see-more' }]}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
-          if (item.id === 'see-more') {
-            return (
-              <TouchableOpacity
-                style={[styles.trainerCard, { justifyContent: 'center' }]}
-                onPress={() => navigation.navigate('All Experts')}
-              >
-                <Image source={require('../assets/Images/menu.png')}  />
-                <Text style={styles.seeMoreText}>See More</Text>
-              </TouchableOpacity>
-            );
-          }
-
-          return (
-            <TouchableOpacity style={styles.trainerCard} onPress={() => navigation.navigate('trainer-profile')}>
-              <View style={styles.trainerImageContainer}>
-                <Image source={item.image} style={styles.trainerImage} />
-              </View>
-              <Text style={styles.trainerName}>{item.name}</Text>
-              <Text style={styles.trainerExperience}>{item.experience} years</Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-
-<Text className='mt-4 mb-1' style={styles.sectionTitle}>Meet Our top Dietician </Text>
-      <FlatList
-        data={[...filteredTrainers, { id: 'see-more' }]}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => {
-          if (item.id === 'see-more') {
-            return (
-              <TouchableOpacity
-                style={[styles.trainerCard, { justifyContent: 'center' }]}
-                onPress={() => navigation.navigate('All Experts')}
-              >
-                <Image source={require('../assets/Images/menu.png')}  />
-                <Text style={styles.seeMoreText}>See More</Text>
-              </TouchableOpacity>
-            );
-          }
-
-          return (
-            <TouchableOpacity style={styles.trainerCard} onPress={() => navigation.navigate('trainer-profile')}>
-              <View style={styles.trainerImageContainer}>
-                <Image source={item.image} style={styles.trainerImage} />
-              </View>
-              <Text style={styles.trainerName}>{item.name}</Text>
-              <Text style={styles.trainerExperience}>{item.experience} years</Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-
+      {/* Trainer Sections */}
+      {renderTrainerSection(trainers, 'Meet Our Experts')}
+      {renderTrainerSection(dermatologists, 'Meet Our Top Dermatologist')}
+      {renderTrainerSection(dieticians, 'Meet Our Top Dietician')}
     </ScrollView>
   );
 };
@@ -266,7 +245,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e1f3f0',
     borderWidth: 1,
     borderColor: '#a8dcd4',
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   trainerImageContainer: {
     width: 70,
@@ -300,16 +279,31 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-  sliderContainer: {
-    width: '100%',
-    height: 180,
-    marginBottom: 20,
-  },
   sliderImage: {
     width: '96%',
     height: 180,
     resizeMode: 'cover',
     borderRadius: 22,
+  },
+  noDataCard: {
+    width: '100%',
+    backgroundColor: '#f0f4f4',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  noDataImage: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+    resizeMode: 'contain',
+  },
+  noDataText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#888',
+    textAlign: 'center',
   },
 });
 

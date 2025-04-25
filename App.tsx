@@ -30,6 +30,11 @@ import ChatScreen from './src/components/pages/ChatScreen';
 import MyProfile from './src/components/pages/MyProfile';
 import Welcome from './src/screens/Welcome';
 import AuthChoice from './src/screens/AuthChoice';
+import BlogDetails from './src/components/pages/BlogDetails';
+import UserBlogs from './src/components/pages/UserBlogs';
+// import EditProfileScreen from './src/components/profile-pages/EditProfileScreen';
+import EditProfile from './src/components/profile-pages/EditProfileScreen';
+import BankDetailsPage from './src/components/profile-pages/BankDetailsPage';
 
 
 
@@ -57,7 +62,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Coummunity" component={Coummunity} />
         <Stack.Screen name="Chat" component={ChatPage} />
 
-        <Stack.Screen name="trainer-profile" component={TrainerProfile} />
+        <Stack.Screen name="Trainer" component={TrainerProfile} />
         <Stack.Screen name="Followers" component={FollowersList} />
         <Stack.Screen name="Following" component={FollowersList} />
     
@@ -68,6 +73,10 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Blog Post" component={CreateBlog} />
         <Stack.Screen name="chat-msg" component={ChatScreen} />
         <Stack.Screen name="my-profile" component={MyProfile} />
+        <Stack.Screen name="BlogDetails" component={BlogDetails} options={{ title: 'Blog Details' }} />
+        <Stack.Screen name="Your Blogs" component={UserBlogs} options={{ title: 'Your Blogs' }} />
+        <Stack.Screen name="Edit Profile" component={EditProfile} options={{ title: 'Edit Your Profile' }} />
+        <Stack.Screen name="Bank Details" component={BankDetailsPage} options={{ title: 'Add Bank Details' }} />
 
 
         {/* TOOLS  */}
