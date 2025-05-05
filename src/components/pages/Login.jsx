@@ -16,7 +16,7 @@ const Login = ({ navigation }) => {
 
         setLoading(true);
         try {
-            const response = await axios.post('https://fitness-backend-eight.vercel.app/api/user/login', { email, password });
+            const response = await axios.post('https://fitness-backend-node.onrender.com/api/user/login', { email, password });
 
             const { token, user } = response.data;
 

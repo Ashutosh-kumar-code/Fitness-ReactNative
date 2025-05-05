@@ -6,6 +6,8 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import RazorpayCheckout from 'react-native-razorpay';
+import { Alert } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -106,6 +108,176 @@ const TrainerProfile = () => {
         );
     }
 
+    const handlePayment = async (type) => {
+        if (!currentUserId || !id) return;
+    
+        try {
+            // 1️⃣ Check if user has already paid today
+            const paymentStatus = await axios.get('https://fitness-backend-eight.vercel.app/api/payment/status', {
+                params: { userId: currentUserId, trainerId: id }
+            });
+    
+            if (paymentStatus.data.paidToday) {
+                // Alert.alert('Already Paid', 'You have already made a payment today');
+                if (type === 'call') {
+                    navigation.navigate('CallStartScreen', { trainerId: id, userId: currentUserId });
+                } else {
+                    navigation.navigate('ChatPage', { trainerId: id });
+                }
+                return;
+            }
+    
+            // 2️⃣ Create Razorpay order
+            const amount = type === 'call' ? trainer.feesCall : trainer.feesChat;
+    
+            const { data } = await axios.post('https://fitness-backend-eight.vercel.app/api/payment/order', {
+                userId: currentUserId,
+                trainerId: id,
+                amount,
+            });
+    
+            const options = {
+                description: `Payment for ${type} with ${trainer.name}`,
+                currency: 'INR',
+                key: 'rzp_test_p69Op3ruUEKuzy', // Your Razorpay Key_ID here
+                amount: data.order.amount,
+                name: 'FitConnect App',
+                order_id: data.order.id,
+                prefill: {
+                    email: trainer.email || 'demo@email.com',
+                    contact: trainer.phone || '9000000000',
+                    name: trainer.name || 'FitConnect User',
+                },
+                theme: { color: '#329e8e' },
+            };
+    
+            // 3️⃣ Open Razorpay Payment Modal
+            RazorpayCheckout.open(options)
+    .then(async (paymentData) => {
+        console.log('Payment Data:', paymentData); // Make sure this contains all fields
+
+        try {
+            const verifyRes = await axios.post('https://fitness-backend-eight.vercel.app/api/payment/verify', {
+                razorpay_order_id: paymentData.razorpay_order_id,
+                razorpay_payment_id: paymentData.razorpay_payment_id,
+                razorpay_signature: paymentData.razorpay_signature,
+                userId: currentUserId,
+                trainerId: id,
+                amount,
+            });
+
+            if (verifyRes.status === 200) {
+                // Mark as paid
+                await axios.post('https://fitness-backend-eight.vercel.app/api/payment/mark-paid', {
+                    userId: currentUserId,
+                    trainerId: id,
+                });
+
+                if (type === 'call') {
+                    navigation.navigate('CallStartScreen', { trainerId: id, userId: currentUserId });
+                } else {
+                    navigation.navigate('ChatPage', { trainerId: id });
+                }
+            } else {
+                Alert.alert('Error', 'Payment verification failed. Try again later.');
+            }
+        } catch (verifyError) {
+            console.log('Verify error:', verifyError.response?.data || verifyError);
+            Alert.alert('Error', 'Payment verification failed. Try again later.====', verifyError.response?.data,"====",verifyError);
+        }
+    })
+    .catch((error) => {
+        console.log('Payment Error:', error);
+        Alert.alert('Payment failed', 'Try again later.');
+    });
+
+        } catch (err) {
+            // console.error('❌ Order creation error:', err);
+            if (err?.response?.status === 400 && err?.response?.data?.error === 'Already paid') {
+                Alert.alert('Already Paid', 'You have already made a payment for today. Please use your existing access.');
+            }else {
+                Alert.alert('Error', 'Could not initiate payment. Try again.');
+            }
+        }
+    };
+    
+    // const onPressCall = async () => {
+    //     await handlePayment('call');
+    //   };
+
+    // const handlePayment = async (type) => {
+    //     if (!currentUserId || !id) return;
+    
+    //     try {
+    //         const amount = type === 'call' ? trainer.feesCall : trainer.feesChat;
+    
+    //         // Create order
+    //         const { data } = await axios.post('https://fitness-backend-eight.vercel.app/api/payment/order', {
+    //             userId: currentUserId,
+    //             trainerId: id,
+    //             amount,
+    //         });
+    
+    //         const options = {
+    //             description: `Payment for ${type} with ${trainer.name}`,
+    //             currency: 'INR',
+    //             key: 'rzp_test_p69Op3ruUEKuzy',
+    //             amount: data.order.amount,
+    //             name: 'FitConnect App',
+    //             order_id: data.order.id, // ✅ use the dynamic order ID
+    //             prefill: {
+    //               email: trainer.email || 'demo@email.com',
+    //               contact: trainer.phone || '9000000000',
+    //               name: trainer.name || 'FitConnect User',
+    //             },
+    //             theme: { color: '#329e8e' },
+    //           };
+              
+    //           RazorpayCheckout.open(options)
+    //           .then(async (paymentData) => {
+    //             console.log('Payment Data:', paymentData); // Check full response
+    //             try {
+    //             const verifyRes = await axios.post('https://fitness-backend-eight.vercel.app/api/payment/verify', {
+    //               razorpay_order_id: paymentData.razorpay_order_id,
+    //               razorpay_payment_id: paymentData.razorpay_payment_id,
+    //               razorpay_signature: paymentData.razorpay_signature,
+    //               userId: currentUserId,
+    //               trainerId: id,
+    //               amount,
+    //             });
+            
+    //             // console.log('Payment Verification Response:', verifyRes.data); // Check verification result
+            
+    //             if (verifyRes.status === 200) {
+    //               if (type === 'call') {
+    //                 navigation.navigate('CallStartScreen', { trainerId: id, userId:currentUserId });
+    //               } else {
+    //                 navigation.navigate('ChatPage', { trainerId: id });
+    //               }
+    //             } else {
+    //               Alert.alert('Error', 'Payment verification failed.');
+    //             }
+    //          } catch (verifyError) {
+    //                 console.log('Verify error:', verifyError.response?.data || verifyError.message);
+
+    //                 if (verifyError.response?.data?.message === 'You have already paid today!') {
+    //                     Alert.alert('Already Paid', 'You have already made a payment today. Please try again tomorrow.');
+    //                 } else {
+    //                     Alert.alert('Error', 'Payment verification failed. Please try again.');
+    //                 }
+    //             }
+    //           })
+    //           .catch((error) => {
+    //             console.log('Payment Error:', error.response || error); // Log the full error response
+    //             Alert.alert('Payment failed', 'Try again later.');
+    //           });
+            
+    //     } catch (err) {
+    //         console.error('Order creation error:', err);
+    //         Alert.alert('Error', 'Could not initiate payment.');
+    //     }
+    // };    
+
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
@@ -154,10 +326,10 @@ const TrainerProfile = () => {
                 </Text>
 
                 <View style={styles.pricingContainer}>
-                    <TouchableOpacity style={styles.circularButton}>
+                    <TouchableOpacity style={styles.circularButton} onPress={() => handlePayment('call')} >
                         <Text style={styles.priceText}>Call{'\n'}₹{trainer.feesCall || 0}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.circularButton}>
+                    <TouchableOpacity style={styles.circularButton} onPress={() => handlePayment('chat')}>
                         <Text style={styles.priceText}>Chat{'\n'}₹{trainer.feesChat || 0}</Text>
                     </TouchableOpacity>
                 </View>
@@ -165,9 +337,9 @@ const TrainerProfile = () => {
                 <View style={styles.bookingContainer}>
                     <Text style={styles.nextAvailable}>Next available at</Text>
                     <Text style={styles.time}>{trainer.nextAvailable || '11:45 AM - Tomorrow'}</Text>
-                    <TouchableOpacity style={styles.bookNowButton}>
+                    {/* <TouchableOpacity style={styles.bookNowButton}>
                         <Text style={styles.bookNowText}>Book now →</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             </View>
         </ScrollView>
@@ -317,6 +489,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    
 });
 
 export default TrainerProfile;

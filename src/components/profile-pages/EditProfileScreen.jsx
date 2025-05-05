@@ -92,50 +92,60 @@ const EditProfile = () => {
   };
 
   const handleSave = async () => {
-    const formData = new FormData();
+    let uploadedImageUrl = profileImage;
   
-    formData.append('userId', userId);
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('phoneNumber', phoneNumber);
-    formData.append('age', age);
-    formData.append('gender', gender);
-    formData.append('city', city);
-    formData.append('bio', bio);
-    languagesSpoken.forEach(lang => formData.append('languages[]', lang));
-  
+    // If user selected a new image (not already uploaded)
     if (profileImage && !profileImage.startsWith('https')) {
-      const filename = profileImage.split('/').pop();
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : `image`;
-      formData.append('profileImageFile', {
+      const data = new FormData();
+      data.append('file', {
         uri: profileImage,
-        name: filename,
-        type
+        type: 'image/jpeg', // or your correct mime type
+        name: 'upload.jpg'
       });
+      data.append('upload_preset', 'your_upload_preset'); // You will get this from Cloudinary settings
+      data.append('cloud_name', 'your_cloud_name'); // Your Cloudinary cloud name
+  
+      try {
+        const res = await fetch('https://api.cloudinary.com/v1_1/your_cloud_name/image/upload', {
+          method: 'POST',
+          body: data
+        });
+  
+        const cloudData = await res.json();
+        uploadedImageUrl = cloudData.secure_url;
+      } catch (error) {
+        console.error('Cloudinary upload error', error);
+        Alert.alert('Error', 'Could not upload image');
+        return;
+      }
     }
   
+    const profileData = {
+      userId,
+      name,
+      email,
+      phoneNumber,
+      age,
+      gender,
+      city,
+      bio,
+      languagesSpoken,
+      profileImage: uploadedImageUrl,
+    };
+  
     if (userRole === 'trainer') {
-      formData.append('trainerType', trainerType);
-      formData.append('experience', experience);
-      formData.append('currentOccupation', currentOccupation);
-      formData.append('availableTimings', availableTimings);
-      formData.append('tagline', tagline);
-      formData.append('feesChat', feesChat);
-      formData.append('feesCall', feesCall);
+      profileData.trainerType = trainerType;
+      profileData.experience = experience;
+      profileData.currentOccupation = currentOccupation;
+      profileData.availableTimings = availableTimings;
+      profileData.tagline = tagline;
+      profileData.feesChat = feesChat;
+      profileData.feesCall = feesCall;
     }
   
     setSaving(true);
     try {
-      await axios.put(
-        `https://fitness-backend-eight.vercel.app/api/user/profile/update`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      await axios.put('https://fitness-backend-eight.vercel.app/api/user/profile/update', profileData);
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error) {
       console.error('Update failed', error);
@@ -144,6 +154,7 @@ const EditProfile = () => {
       setSaving(false);
     }
   };
+  
   
 
   if (loading) {

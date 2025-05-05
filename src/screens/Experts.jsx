@@ -25,10 +25,6 @@ const Experts = () => {
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTrainersByType(); // Fetch all types
-  }, []);
-
   const fetchTrainersByType = async () => {
     try {
       const [trainerRes, dermaRes, dietRes] = await Promise.all([
@@ -53,7 +49,9 @@ const Experts = () => {
     }
   };
   
-  
+  useEffect(() => {
+    fetchTrainersByType(); // Fetch all types
+  }, []);
 
   const renderTrainerSection = (data, title, navigateTo) => {
     const hasData = Array.isArray(data) && data.length > 0;
@@ -114,6 +112,10 @@ const Experts = () => {
     { id: 2, name: 'Sita', image: require('../assets/Images/trainer_1.png') },
     { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
     { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
+    { id: 1, name: 'Ravi', image: require('../assets/Images/trainer.png') },
+    { id: 2, name: 'Sita', image: require('../assets/Images/trainer_1.png') },
+    { id: 3, name: 'John', image: require('../assets/Images/trainer.png') },
+    { id: 4, name: 'Anita', image: require('../assets/Images/trainer_1.png') },
   ];
 
   const advertiseData = [
@@ -125,6 +127,9 @@ const Experts = () => {
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {/* Search */}
+     <TouchableOpacity  onPress={() => navigation.navigate('IncomingCall')}>
+               <Text > IncomingCall </Text>
+             </TouchableOpacity>
       <View style={styles.searchRow}>
         <TextInput
           style={styles.searchInput}

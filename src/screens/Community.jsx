@@ -19,7 +19,7 @@ const Coummunity = () => {
   const fetchBlogs = async () => {
     try {
       setRefreshing(true);
-      const response = await axios.get('https://fitness-backend-eight.vercel.app/api/blog');
+      const response = await axios.get('https://fitness-backend-node.onrender.com/api/blog');
       setBlogs(response.data);
     } catch (error) {
       console.error('Error fetching blogs:', error);
@@ -92,7 +92,9 @@ const Coummunity = () => {
         />
       )}
 
-      {userRole === 'trainer' && (
+      {
+      userRole === 'trainer' &&
+       (
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Blog Post')}>
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>

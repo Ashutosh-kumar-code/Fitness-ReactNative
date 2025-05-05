@@ -35,14 +35,100 @@ import UserBlogs from './src/components/pages/UserBlogs';
 // import EditProfileScreen from './src/components/profile-pages/EditProfileScreen';
 import EditProfile from './src/components/profile-pages/EditProfileScreen';
 import BankDetailsPage from './src/components/profile-pages/BankDetailsPage';
-
-
+import CallStartScreen from './src/components/profile-pages/CallStartPage';
+import CallScreen from './src/components/profile-pages/CallScreen';
+import io from 'socket.io-client';
+import { useEffect, useRef } from 'react';
+import IncomingCallScreen from './src/components/profile-pages/IncomingCallScreen';
+// import { useNavigation } from '@react-navigation/native';
+import { NavigationContainerRef } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
+const socket = io('https://fitness-backend-node.onrender.com');
+
 function App(): React.JSX.Element {
+
+  const navigationRef = useRef<NavigationContainerRef<any>>(null);
+  const isReadyRef = useRef(false);
+  const socketInitialized = useRef(false);
+
+  useEffect(() => {
+    if (socketInitialized.current) return;
+    socketInitialized.current = true;
+
+    const initializeSocket = async () => {
+      const userId = await AsyncStorage.getItem('userId');
+      if (userId) {
+        socket.emit('register', { userId });
+        console.log('✅ Socket registered for user:', userId);
+
+        socket.on('incomingCall', ({ from, signalData, callId }) => {
+          console.log('📞 Incoming call from:', from);
+
+          if (isReadyRef.current && navigationRef.current) {
+            navigationRef.current.navigate('IncomingCall', {
+              callerId: from,
+              signalData,
+              callId,
+            });
+          } else {
+            console.warn('⚠️ Navigation not ready to handle incoming call');
+          }
+        });
+      }
+    };
+
+    initializeSocket();
+
+    return () => {
+      socket.off('incomingCall');
+      socket.disconnect();
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   const registerSocket = async () => {
+  //     try {
+  //       const userId = await AsyncStorage.getItem('userId');
+  //       if (userId) {
+  //         socket.emit('register', { userId });
+  //         console.log('Socket registered for user:', userId);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error registering socket:', error);
+  //     }
+  //   };
+  
+  //   registerSocket();
+  
+  //   socket.on('incomingCall', ({ from, signalData, callId }) => {
+  //     console.log('Incoming call from:', from);
+  //     setTimeout(() => {
+  //       if (isReadyRef.current && navigationRef.current) {
+  //     navigationRef.current?.navigate('IncomingCall', {
+  //       callerId: from,
+  //       signalData,
+  //       callId,
+  //     });
+  //   } else {
+  //     console.log('Navigation not ready');
+  //   }
+  // }, 500); // 0.5s delay
+  //   });
+  
+  //   return () => {
+  //     socket.off('incomingCall'); // good practice
+  //     socket.disconnect();
+  //   };
+  // }, []);
+  
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}  onReady={() => {
+      isReadyRef.current = true;
+    }} >
+    
       <Stack.Navigator initialRouteName="Welcome">
         {/* <Stack.Screen
           name="Splash"
@@ -78,6 +164,14 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Edit Profile" component={EditProfile} options={{ title: 'Edit Your Profile' }} />
         <Stack.Screen name="Bank Details" component={BankDetailsPage} options={{ title: 'Add Bank Details' }} />
 
+        <Stack.Screen name="CallStartScreen" component={CallStartScreen} />
+<Stack.Screen name="CallScreen" component={CallScreen} />
+<Stack.Screen
+          name="IncomingCall"
+          component={IncomingCallScreen}
+          options={{ headerShown: false }}
+        />
+
 
         {/* TOOLS  */}
         <Stack.Screen name="bmi" component={BMICalculator} />
@@ -90,7 +184,7 @@ function App(): React.JSX.Element {
   );
 }
 
-
+export { socket };
 export default App;
 
 
